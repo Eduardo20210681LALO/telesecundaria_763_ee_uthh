@@ -1,0 +1,11 @@
+# Crea una nueva rama basada en main
+git branch nueva-rama
+
+# Cambia a la nueva rama
+git checkout nueva-rama
+
+# O crea y cambia en una sola línea
+git checkout -b nueva-rama
+
+# Verifica en qué rama estás
+git branch
