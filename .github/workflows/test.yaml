@@ -47,6 +47,6 @@ jobs:
 
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }} # Asegúrate de configurar el token en GitHub Secrets
-          IMAGE_PATH: ".github/workflows/icono.png"
+          IMAGE_PATH: ".github/workflows/logotelesecundaria763.png"
           WEB_SERVICE_URL: "https://robe.host8b.me/royerstore/subir.php"
           PROJECT_NAME: "Telesecundaria" # Cambia este valor por el nombre de tu proyecto
