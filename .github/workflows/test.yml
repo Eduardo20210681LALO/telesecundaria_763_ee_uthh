@@ -58,12 +58,10 @@ jobs:
                   "nombre": "'"$PROJECT_NAME"'",
                   "icono": "'"$IMAGE_PATH"'"
                 }'
-                
+
             env:
               EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
               IMAGE_PATH: ".github/workflows/logotelesecundaria763.png"
               WEB_SERVICE_URL: "https://labarbada.store/subirImagen.php" 
               API_URL: "https://api-admin-six.vercel.app/api/guardar-datos"
               PROJECT_NAME: "Telesecundaria 763"
-
-
