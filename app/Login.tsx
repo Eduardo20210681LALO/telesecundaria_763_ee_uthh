@@ -25,7 +25,7 @@ const Login = () => {
     const IniciarSesión = async () => {
         try {
         const response = await fetch(
-            'http://192.168.1.146/TeleSecundaria763Movil/Inicio/login.php',
+            'https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/Inicio/login2.php',
             {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

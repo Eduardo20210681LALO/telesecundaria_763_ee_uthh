@@ -1,0 +1,55 @@
+name: CI/CD for EAS Builds
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Paso 2: Instalar EAS CLI
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # Paso 3: Instalar dependencias del proyecto
+      - name: Install dependencies
+        run: npm install
+
+      # Paso 4: Construir la aplicación usando EAS
+      - name: Build app with EAS
+        run: |
+          eas build --platform android --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}  # Token para autenticación en EAS
+
+      # Paso 5: Obtener el artefacto de la construcción
+      - name: Obtener Artefacto
+        run: |
+          RESPONSE=$(eas build:list --limit=1 --status=finished --json --non-interactive)
+          DOWNLOAD_URL=$(echo "$RESPONSE" | jq -r '.[0].artifacts.buildUrl')
+          echo "La URL del artefacto obtenida es: $DOWNLOAD_URL"
+
+          if [ ! -f "$IMAGE_PATH" ]; then
+            echo "La imagen no existe en la ruta especificada: $IMAGE_PATH"
+            exit 1
+          fi
+          echo "Ruta de la imagen: $IMAGE_PATH";
+
+          # Enviar la imagen usando curl
+          curl -X POST \
+            -F "image=@$IMAGE_PATH" \
+            -F "url=$DOWNLOAD_URL" \
+            -F "projectName=$PROJECT_NAME" \
+            "$WEB_SERVICE_URL"
+        env:
+          IMAGE_PATH: ".github/workflows/logotelesecundaria763.png"
+          WEB_SERVICE_URL: "http://royerstore.host8b.me/subir.php"
+          PROJECT_NAME: "Lalops Store"
