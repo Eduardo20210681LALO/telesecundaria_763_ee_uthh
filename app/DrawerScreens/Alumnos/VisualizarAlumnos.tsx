@@ -47,7 +47,7 @@ export default function VisualizarAlumnos() {
 
     useEffect(() => {
         axios
-            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php')
+            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerPeriodos.php')
             .then(res => {
                 const data = res.data.map((periodo: Periodo) => ({
                     label: periodo.vchPeriodo,
@@ -58,7 +58,7 @@ export default function VisualizarAlumnos() {
             .catch(err => console.error('Error al obtener periodos:', err));
 
         axios
-            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php')
+            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerGrados.php')
             .then(res => {
                 const data = res.data.map((grado: Grado) => ({
                     label: grado.vchGrado,
@@ -69,7 +69,7 @@ export default function VisualizarAlumnos() {
             .catch(err => console.error('Error al obtener grados:', err));
 
         axios
-            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php')
+            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerGrupos.php')
             .then(res => {
                 const data = res.data.map((grupo: Grupo) => ({
                     label: grupo.vchGrupo,
@@ -83,7 +83,7 @@ export default function VisualizarAlumnos() {
     const buscarAlumnos = () => {
         if (selectedPeriodo && selectedGrado && selectedGrupo && user?.id_usuario) {
             axios
-                .get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${user.id_usuario}`)
+                .get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${user.id_usuario}`)
                 .then(res => {
                     console.log("Alumnos:", res.data);
                     if (res.data.success) {

@@ -70,7 +70,7 @@ export default function EstadisticasGrupalDocent() {
     const fetchData = async () => {
       try {
         const periodosRes = await axios.get<Periodo[]>(
-          "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerPeriodos.php"
+          "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerPeriodos.php"
         );
         setPeriodos(
           periodosRes.data.map((periodo) => ({
@@ -80,7 +80,7 @@ export default function EstadisticasGrupalDocent() {
         );
 
         const gradosRes = await axios.get<Grado[]>(
-          "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrados.php"
+          "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerGrados.php"
         );
         setGrados(
           gradosRes.data.map((grado) => ({
@@ -90,7 +90,7 @@ export default function EstadisticasGrupalDocent() {
         );
 
         const gruposRes = await axios.get<Grupo[]>(
-          "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763/AdminAlumnos/ObtenerGrupos.php"
+          "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerGrupos.php"
         );
         setGrupos(
           gruposRes.data.map((grupo) => ({
@@ -142,7 +142,7 @@ export default function EstadisticasGrupalDocent() {
 
 
 
-  
+
 
   const toggleTrimestre = (trimestre: keyof typeof visibleTrimestres) => {
     setVisibleTrimestres((prev) => ({

@@ -1,8 +1,6 @@
 import React from "react";
 import HomeScreen from "./HomeScreen";
 
-export default function index ()  {
-    return(
-        <HomeScreen/>
-    )
-}
+const Index = () => <HomeScreen />;
+
+export default Index;  // Exportación predeterminada requerida

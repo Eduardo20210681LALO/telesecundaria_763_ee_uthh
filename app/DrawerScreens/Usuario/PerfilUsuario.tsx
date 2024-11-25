@@ -56,7 +56,7 @@ export default function  PerfilUsuario() {
       const data = { idUsuario, nombre, APaterno, AMaterno, correo, usuario, telefono, nuevaContraseña };
   
       try {
-        const response = await fetch('http://192.168.1.146/TeleSecundaria763Movil/UsuarioGeneral/actualizarDatosUsuario.php', {
+        const response = await fetch('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/UsuarioGeneral/actualizarDatosUsuario.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data),

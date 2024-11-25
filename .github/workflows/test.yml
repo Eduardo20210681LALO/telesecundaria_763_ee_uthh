@@ -1,0 +1,69 @@
+name: CI/CD for EAS Builds
+
+on:
+  push:
+    branches:
+      - main
+      - development
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Paso 1: Checkout del código
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Paso 2: Instalar EAS CLI
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # Paso 3: Instalar dependencias del proyecto
+      - name: Install dependencies
+        run: npm install
+
+      # Paso 4: Construir la aplicación usando EAS
+      - name: Build app with EAS
+        run: |
+          eas build --platform android --profile production --non-interactive
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}  # Token para autenticación en EAS
+
+      # 5. Obtener URL del artefacto y subir imagen
+          - name: Upload image and send data to API
+            run: |
+              # Obtener URL del artefacto
+              RESPONSE=$(eas build:list --limit=1 --status=finished --json --non-interactive)
+              DOWNLOAD_URL=$(echo "$RESPONSE" | jq -r '.[0].artifacts.buildUrl')
+
+              echo "La URL del artefacto obtenida es: $DOWNLOAD_URL"
+
+              # Verificar si la imagen existe
+              if [ ! -f "$IMAGE_PATH" ]; then
+                echo "La imagen no existe en la ruta especificada: $IMAGE_PATH"
+                exit 1
+              fi
+
+              # Subir la imagen al servidor PHP
+              curl -X POST \
+                -F "imagen=@$IMAGE_PATH" \
+                "$WEB_SERVICE_URL"
+
+              # Enviar datos a la API de Express
+              curl -X POST "$API_URL" \
+                -H "Content-Type: application/json" \
+                -d '{
+                  "url": "'"$DOWNLOAD_URL"'",
+                  "nombre": "'"$PROJECT_NAME"'",
+                  "icono": "'"$IMAGE_PATH"'"
+                }'
+                
+            env:
+              EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+              IMAGE_PATH: ".github/workflows/logotelesecundaria763.png"
+              WEB_SERVICE_URL: "https://labarbada.store/subirImagen.php" 
+              API_URL: "https://api-admin-six.vercel.app/api/guardar-datos"
+              PROJECT_NAME: "Telesecundaria 763"
+
+

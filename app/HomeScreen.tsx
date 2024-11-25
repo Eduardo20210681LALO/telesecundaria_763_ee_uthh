@@ -1,33 +1,135 @@
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React from "react";
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from "react-native";
 import { useRouter } from 'expo-router';
-import tw from 'tailwind-react-native-classnames';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const HomeScreen = () => {
-
+const Home = () => {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
+
+  const handleLogin = () => {
+    router.push('/Login');
+  };
 
   return (
-    <View style={[tw`flex-1 bg-white`, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-      <Text style={tw`text-black font-bold text-center text-2xl mb-6`}>Home</Text>
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>¡Bienvenido!</Text>
+        <Text style={styles.subtitle}>Al portal Virtual</Text>
+        <Text style={styles.highlight}>TeleSecundaria 763</Text>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Ir al Login</Text>
+        </TouchableOpacity>
+      </View>
 
-      {/* Botón para navegar a Login */}
-      <TouchableOpacity onPress={() => router.push('/Login')} style={tw`bg-blue-500 p-4 m-4 rounded items-center`}>
-        <Text style={tw`text-white text-lg`}>Ir a Login</Text>
-      </TouchableOpacity>
+      {/* Misión */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Misión</Text>
+        <Image
+          source={require("../assets/images/Imagen1.jpg")}
+          style={styles.image}
+        />
+        <Text style={styles.text}>
+          Somos una escuela que logra un trabajo colaborativo entre dirección,
+          docentes, personal de apoyo, alumnos(as) y padres de familia, para
+          obtener aprendizajes significativos y lograr los objetivos de la nueva
+          escuela mexicana.
+        </Text>
+      </View>
 
-      {/* Botón para navegar a Register */}
-      <TouchableOpacity onPress={() => router.push('/Register')} style={tw`bg-green-500 p-4 m-4 rounded items-center`}>
-        <Text style={tw`text-white text-lg`}>Ir a Register</Text>
-      </TouchableOpacity>
+      {/* Visión */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Visión</Text>
+        <Image
+          source={require("../assets/images/Imagen4.jpeg")}
+          style={styles.image}
+        />
+        <Text style={styles.text}>
+          Ser una institución reconocida por su desempeño académico y formativo,
+          capaz de proveer a nuestros alumnos(as) conocimientos, habilidades,
+          destrezas y aptitudes que les permita ser competentes y participar
+          activamente en la sociedad cambiante a la que pertenecen.
+        </Text>
+      </View>
 
-     
-    </View>
+      {/* Valores */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Valores</Text>
+        <Image
+          source={require("../assets/images/work1.jpg")}
+          style={styles.image}
+        />
+        <Text style={styles.text}>
+          Puntualidad, Responsabilidad, Compromiso, Respeto, Disciplina, Empatía,
+          Actitud de Servicio, Liderazgo, Igualdad, Resiliencia.
+        </Text>
+      </View>
+    </ScrollView>
   );
-}
+};
 
-export default HomeScreen;
+export default Home;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#F5F5F5",
+  },
+  header: {
+    alignItems: "center",
+    paddingVertical: 40,
+    backgroundColor: "#7d0430",
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#fff",
+    marginBottom: 5,
+  },
+  subtitle: {
+    fontSize: 20,
+    color: "#fff",
+  },
+  highlight: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#FFDE03",
+    marginVertical: 10,
+  },
+  button: {
+    marginTop: 20,
+    backgroundColor: "#FFDE03",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: "#7d0430",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  section: {
+    marginVertical: 20,
+    paddingHorizontal: 15,
+  },
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#7d0430",
+    marginBottom: 10,
+  },
+  text: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+    marginTop: 10,
+  },
+  image: {
+    width: "100%",
+    height: 200,
+    borderRadius: 10,
+    resizeMode: "cover",
+    marginVertical: 10,
+  },
+});
