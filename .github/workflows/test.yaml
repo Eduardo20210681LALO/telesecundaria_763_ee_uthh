@@ -12,7 +12,6 @@ on:
 jobs:
   get:
     runs-on: ubuntu-latest
-    #needs: build-and-test
 
     steps:
       - name: Checkout code
@@ -24,7 +23,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Construcción para Android
       - name: Obtener Artefacto
         run: |
           RESPONSE=$(eas build:list --limit=1 --status=finished --json --non-interactive)
@@ -46,7 +44,7 @@ jobs:
             "$WEB_SERVICE_URL"
 
         env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }} # Asegúrate de configurar el token en GitHub Secrets
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
           IMAGE_PATH: ".github/workflows/logotelesecundaria763.png"
           WEB_SERVICE_URL: "https://robe.host8b.me/royerstore/subir.php"
-          PROJECT_NAME: "Telesecundaria" # Cambia este valor por el nombre de tu proyecto
+          PROJECT_NAME: "Telesecundaria"
