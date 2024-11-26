@@ -1,24 +1,16 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, View, Button,TouchableOpacity } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Card, Divider, Text } from 'react-native-paper';
-import { UserContext } from '../UsertContext';
-import axios from 'axios';
+import React, { useContext, useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    ScrollView,
+    TouchableOpacity,
+} from "react-native";
 
-type Periodo = {
-    vchPeriodo: string;
-    intClvPeriodo: number;
-};
-
-type Grado = {
-    vchGrado: string;
-    intClvGrado: number;
-};
-
-type Grupo = {
-    vchGrupo: string;
-    intClvGrupo: number;
-};
+import { Card, Divider, Provider as PaperProvider } from "react-native-paper";
+import { UserContext } from "../UsertContext";
+import axios from "axios";
+import DropDownPicker from "react-native-dropdown-picker";
 
 type Alumno = {
     vchCurpAlumno: string;
@@ -30,227 +22,220 @@ type Alumno = {
 export default function VisualizarAlumnos() {
     const { user } = useContext(UserContext);
 
-    const [periodos, setPeriodos] = useState<{ label: string; value: string }[]>([]);
+    const [studentsData, setStudentsData] = useState<Alumno[]>([]);
+    const [periodos, setPeriodos] = useState<{ label: string; value: string }[]>(
+      []
+    );
     const [grados, setGrados] = useState<{ label: string; value: string }[]>([]);
     const [grupos, setGrupos] = useState<{ label: string; value: string }[]>([]);
-    const [alumnos, setAlumnos] = useState<Alumno[]>([]);
-
-    // Estados de dropdown
+  
+    const [selectedPeriodo, setSelectedPeriodo] = useState<string>("");
+    const [selectedGrado, setSelectedGrado] = useState<string>("");
+    const [selectedGrupo, setSelectedGrupo] = useState<string>("");
+  
     const [openPeriodo, setOpenPeriodo] = useState(false);
-    const [selectedPeriodo, setSelectedPeriodo] = useState<string | null>(null);
-
     const [openGrado, setOpenGrado] = useState(false);
-    const [selectedGrado, setSelectedGrado] = useState<string | null>(null);
-
     const [openGrupo, setOpenGrupo] = useState(false);
-    const [selectedGrupo, setSelectedGrupo] = useState<string | null>(null);
-
+  
     useEffect(() => {
+        // Obtener periodos
         axios
-            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerPeriodos.php')
-            .then(res => {
-                const data = res.data.map((periodo: Periodo) => ({
-                    label: periodo.vchPeriodo,
-                    value: String(periodo.intClvPeriodo),
-                }));
-                setPeriodos(data);
-            })
-            .catch(err => console.error('Error al obtener periodos:', err));
-
+            .get(
+            "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerPeriodos.php"
+            )
+            .then((res) => {
+            const formattedPeriodos = res.data.map((periodo: any) => ({
+                label: periodo.vchPeriodo,
+                value: String(periodo.intClvPeriodo),
+        }));
+        setPeriodos(formattedPeriodos);
+        })
+        .catch((err) => console.error("Error al obtener periodos:", err));
+  
+        // Obtener grados
         axios
-            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerGrados.php')
-            .then(res => {
-                const data = res.data.map((grado: Grado) => ({
-                    label: grado.vchGrado,
-                    value: String(grado.intClvGrado),
-                }));
-                setGrados(data);
+            .get(
+            "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerGrados.php"
+            )
+            .then((res) => {
+            const formattedGrados = res.data.map((grado: any) => ({
+                label: grado.vchGrado,
+                value: String(grado.intClvGrado),
             })
-            .catch(err => console.error('Error al obtener grados:', err));
-
+        );
+            setGrados(formattedGrados);
+        })
+        .catch((err) => console.error("Error al obtener grados:", err));
+  
+        // Obtener grupos
         axios
-            .get('https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerGrupos.php')
-            .then(res => {
-                const data = res.data.map((grupo: Grupo) => ({
-                    label: grupo.vchGrupo,
-                    value: String(grupo.intClvGrupo),
-                }));
-                setGrupos(data);
+            .get(
+            "https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/AdminAlumnos/ObtenerGrupos.php"
+            )
+            .then((res) => {
+            const formattedGrupos = res.data.map((grupo: any) => ({
+                label: grupo.vchGrupo,
+                value: String(grupo.intClvGrupo),
             })
-            .catch(err => console.error('Error al obtener grupos:', err));
+        );
+            setGrupos(formattedGrupos);
+        })
+            .catch((err) => console.error("Error al obtener grupos:", err));
     }, []);
-
-    const buscarAlumnos = () => {
+  
+    const fetchStudents = () => {
         if (selectedPeriodo && selectedGrado && selectedGrupo && user?.id_usuario) {
             axios
-                .get(`https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${user.id_usuario}`)
-                .then(res => {
-                    console.log("Alumnos:", res.data);
-                    if (res.data.success) {
-                        setAlumnos(res.data.alumnos);
-                    } else {
-                        setAlumnos([]);
-                    }
-                })
-                .catch(err => console.error('Error al obtener alumnos:', err));
-        } else {
-            console.log("Seleccione todos los filtros.");
+            .get(
+                `https://telesecundaria763.host8b.me/Web_Services/TeleSecundaria763Movil/Docentes/TraerAlumnosPorDocente.php?periodo=${selectedPeriodo}&grado=${selectedGrado}&grupo=${selectedGrupo}&docenteId=${user.id_usuario}`
+            )
+            .then((res) => {
+                const uniqueStudents = Array.isArray(res.data.alumnos)
+                ? res.data.alumnos.filter(
+                    (student: Alumno, index: number, self: Alumno[]) =>
+                        self.findIndex((s) => s.vchCurpAlumno === student.vchCurpAlumno) ===
+                        index
+                    )
+                : [];
+                setStudentsData(uniqueStudents);
+            })
+            .catch((err) => console.error("Error al obtener alumnos:", err));
         }
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>Alumnos Por Grupo</Text>
+        <PaperProvider>
+            <View style={styles.container}>
+            <Text style={styles.header}>Visualizar Alumnos</Text>
 
             <Card style={styles.card}>
                 <Card.Content>
-                    {/* Dropdown de Periodo */}
-                    <DropDownPicker
-                        open={openPeriodo}
-                        value={selectedPeriodo}
-                        items={periodos}
-                        setOpen={setOpenPeriodo}
-                        setValue={setSelectedPeriodo}
-                        placeholder="Seleccione un periodo"
-                        style={styles.dropdown}
-                        containerStyle={styles.dropdownContainer}
-                        listMode="MODAL"
-                    />
+                {/* Dropdowns */}
+                <DropDownPicker
+                    open={openPeriodo}
+                    value={selectedPeriodo}
+                    items={periodos}
+                    setOpen={setOpenPeriodo}
+                    setValue={setSelectedPeriodo}
+                    placeholder="Seleccione un periodo"
+                    style={styles.dropdown}
+                    containerStyle={styles.dropdownContainer}
+                    listMode="MODAL"
+                />
+                <DropDownPicker
+                    open={openGrado}
+                    value={selectedGrado}
+                    items={grados}
+                    setOpen={setOpenGrado}
+                    setValue={setSelectedGrado}
+                    placeholder="Seleccione un grado"
+                    style={styles.dropdown}
+                    containerStyle={styles.dropdownContainer}
+                    listMode="MODAL"
+                />
+                <DropDownPicker
+                    open={openGrupo}
+                    value={selectedGrupo}
+                    items={grupos}
+                    setOpen={setOpenGrupo}
+                    setValue={setSelectedGrupo}
+                    placeholder="Seleccione un grupo"
+                    style={styles.dropdown}
+                    containerStyle={styles.dropdownContainer}
+                    listMode="MODAL"
+                />
+                <TouchableOpacity
+                    style={styles.button}
+                    onPress={fetchStudents}
+                    activeOpacity={0.7}
+                >
+                    <Text style={styles.buttonText}>Buscar Alumnos</Text>
+                </TouchableOpacity>
 
-                    {/* Dropdown de Grado */}
-                    <DropDownPicker
-                        open={openGrado}
-                        value={selectedGrado}
-                        items={grados}
-                        setOpen={setOpenGrado}
-                        setValue={setSelectedGrado}
-                        placeholder="Seleccione un grado"
-                        style={styles.dropdown}
-                        containerStyle={styles.dropdownContainer}
-                        listMode="MODAL"
-                    />
-
-                    {/* Dropdown de Grupo */}
-                    <DropDownPicker
-                        open={openGrupo}
-                        value={selectedGrupo}
-                        items={grupos}
-                        setOpen={setOpenGrupo}
-                        setValue={setSelectedGrupo}
-                        placeholder="Seleccione un grupo"
-                        style={styles.dropdown}
-                        containerStyle={styles.dropdownContainer}
-                        listMode="MODAL"
-                    />
-                    
-                    <TouchableOpacity style={styles.button} onPress={buscarAlumnos} activeOpacity={0.7}>
-                            <Text style={styles.buttonText}>Buscar Alumnos</Text>
-                    </TouchableOpacity>
-
-                    {/* Lista de Alumnos */}
-                    <View style={styles.alumnosContainer}>
-                        {alumnos.length > 0 ? (
-                            <ScrollView>
-                                {alumnos.map(alumno => (
-                                    <View key={alumno.vchCurpAlumno} style={styles.alumnoContainer}>
-                                        <Text style={styles.alumnoNombre}>{`${alumno.vchNombre} ${alumno.vchAPaterno} ${alumno.vchAMaterno}`}</Text>
-                                        <Text style={styles.alumnoCurp}>CURP: {alumno.vchCurpAlumno}</Text>
-                                        <Divider style={styles.divider} />
-                                    </View>
-                                ))}
-                            </ScrollView>
-                        ) : (
-                            <Text style={styles.noAlumnosText}>No hay alumnos para los filtros seleccionados.</Text>
-                        )}
-                    </View>
+                {/* Lista de Alumnos */}
+                <View style={styles.alumnosContainer}>
+                    <ScrollView>
+                    {studentsData.length > 0 ? (
+                        studentsData.map((student) => (
+                        <View
+                            key={student.vchCurpAlumno}
+                            style={styles.alumnoContainer}
+                        >
+                            <Text style={styles.alumnoNombre}>
+                            {`${student.vchNombre} ${student.vchAPaterno} ${student.vchAMaterno}`}
+                            </Text>
+                            <Text style={styles.alumnoCurp}>
+                            CURP: {student.vchCurpAlumno}
+                            </Text>
+                            <Divider style={styles.divider} />
+                        </View>
+                        ))
+                    ) : (
+                        <Text style={styles.noAlumnosText}>
+                        No hay alumnos para los filtros seleccionados.
+                        </Text>
+                    )}
+                    </ScrollView>
+                </View>
                 </Card.Content>
             </Card>
-        </ScrollView>
+            </View>
+        </PaperProvider>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-        padding: 20,
-        backgroundColor: '#f0f0f0',
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 10,
+    container: { flex: 1, padding: 20, backgroundColor: "#f0f0f0" },
+    header: {
+        fontSize: 24,
+        fontWeight: "bold",
+        marginBottom: 20,
+        textAlign: "center",
     },
     card: {
-        width: '100%',
-        marginBottom: 20,
-        backgroundColor: '#fff',
+        padding: 10,
         borderRadius: 8,
-        shadowColor: '#000',
+        backgroundColor: "#fff",
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 4,
     },
-    dropdown: {
-        borderWidth: 1,
-        borderColor: '#c4c4c4',
-    },
-    dropdownContainer: {
-        marginBottom: 15,
-        width: '100%',
-    },
-    alumnosContainer: {
-        maxHeight: 450,
-        marginTop: 10,
-    },
+    alumnosContainer: { maxHeight: 350, marginTop: 10 },
     alumnoContainer: {
-        backgroundColor: '#f9f9f9',
         padding: 10,
+        backgroundColor: "#f9f9f9",
         borderRadius: 8,
         marginBottom: 10,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
     },
-    alumnoNombre: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333',
-        textAlign: 'center',
-    },
-    alumnoCurp: {
-        fontSize: 14,
-        color: '#555',
-        textAlign: 'center',
-        marginTop: 4,
-    },
-    divider: {
-        marginVertical: 10,
-        backgroundColor: '#ddd',
-    },
+    alumnoNombre: { fontSize: 16, fontWeight: "bold", textAlign: "center" },
+    alumnoCurp: { fontSize: 14, color: "#555", textAlign: "center", marginTop: 4 },
+    divider: { marginVertical: 10 },
     noAlumnosText: {
+        textAlign: "center",
         fontSize: 16,
-        color: '#777',
-        textAlign: 'center',
+        color: "#777",
         marginTop: 20,
     },
-    buttonContainer: {
-        marginTop: 15,
-    },
     button: {
-        backgroundColor: '#800020',
+        backgroundColor: "#800020",
         paddingVertical: 12,
         paddingHorizontal: 24,
         borderRadius: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
     },
     buttonText: {
-        color: '#fff',
+        color: "#fff",
         fontSize: 16,
-        fontWeight: 'bold',
+        fontWeight: "bold",
+    },
+    dropdownContainer: {
+        marginBottom: 15,
+    },
+    dropdown: {
+        borderColor: "#c4c4c4",
+        backgroundColor: "#fff",
     },
 });
